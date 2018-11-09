@@ -7,9 +7,9 @@ import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -26,12 +26,14 @@ public class Controller {
     @FXML
     private TabPane tabPane;
     @FXML
-    private Tab tabSize, tabResultat;
+    private Tab tabSize, tabResultat, tabDemarches;
+    @FXML
+    private Button demarches;
     private ArrayList<Matrice> matriceArrayList = new ArrayList<>();
     private DecimalFormat numberFormat = new DecimalFormat("0.00");
 
     public void ajouter() {
-        matriceArrayList.add(new Matrice(Character.toString((char) (65 + matriceArrayList.size())), (int) matriceX.getValueFactory().getValue(), (int) matriceY.getValueFactory().getValue()));
+        matriceArrayList.add(new Matrice(Character.toString((char) (65 + matriceArrayList.size())), (int) matriceX.getValueFactory().getValue(), (int) matriceY.getValueFactory().getValue(), ""));
         creerMatrice(matriceArrayList.get(matriceArrayList.size() - 1));
         afficherMatrice(matriceArrayList.get(matriceArrayList.size() - 1));
         test();
@@ -160,22 +162,33 @@ public class Controller {
         }
     }
 
-    public void calculer() {
-        boolean error = false;
+    public void actionCalculer() {
+        calculer(null, false, 0, null);
+    }
+
+    public Matrice calculer(String string, boolean mixte, int nb, Matrice matriceMixte) {
         Matrice matriceTemp;
-        if (toggleGroup.getSelectedToggle() != null && matriceArrayList.size() > 0) {
-            switch (toggleGroup.getSelectedToggle().getUserData().toString()) {
+        if ((toggleGroup.getSelectedToggle() != null || mixte) && matriceArrayList.size() > 0) {
+            if (!mixte)
+                string = toggleGroup.getSelectedToggle().getUserData().toString();
+            switch (string) {
                 case "addition":
-                    matriceTemp = matriceArrayList.get(0);
-                    for (int i = 0; i < matriceArrayList.size() - 1; i++)
-                        matriceTemp = matriceTemp.addition(matriceArrayList.get(i));
-                    resultatsMatrice(matriceTemp);
+                    if (!mixte) {
+                        matriceTemp = matriceArrayList.get(0);
+                        for (int i = 0; i < matriceArrayList.size() - 1; i++)
+                            matriceTemp = matriceTemp.addition(matriceArrayList.get(i));
+                        resultatsMatrice(matriceTemp);
+                    } else
+                        return matriceMixte.addition(matriceArrayList.get(nb + 1));
                     break;
                 case "soustraction":
-                    matriceTemp = matriceArrayList.get(0);
-                    for (int i = 0; i < matriceArrayList.size() - 1; i++)
-                        matriceTemp = matriceTemp.soustraction(matriceArrayList.get(i + 1));
-                    resultatsMatrice(matriceTemp);
+                    if (!mixte) {
+                        matriceTemp = matriceArrayList.get(0);
+                        for (int i = 0; i < matriceArrayList.size() - 1; i++)
+                            matriceTemp = matriceTemp.soustraction(matriceArrayList.get(i + 1));
+                        resultatsMatrice(matriceTemp);
+                    } else
+                        return matriceMixte.soustraction(matriceArrayList.get(nb + 1));
                     break;
                 case "multiplication":
                     multiplication();
@@ -211,16 +224,10 @@ public class Controller {
                     resultatsMatrice(matriceTemp);
                     break;
                 case "determinant":
-                    resultatsNombre(matriceArrayList.get(0).determinant());
+                    resultatsDeterminant(matriceArrayList.get(0).determinant());
                     break;
             }
-            if (error) {
-                Alert alerte = new Alert(Alert.AlertType.INFORMATION);
-                alerte.setTitle("ERREUR");
-                alerte.setHeaderText("Opération impossible");
-                alerte.showAndWait();
-            } else
-                tabPane.getSelectionModel().select(tabResultat);
+            tabPane.getSelectionModel().select(tabResultat);
         } else {
             String message = "";
             if (toggleGroup.getSelectedToggle() == null)
@@ -232,6 +239,7 @@ public class Controller {
             alerte.setHeaderText(message);
             alerte.showAndWait();
         }
+        return null;
     }
 
     private void puissance() {
@@ -288,9 +296,10 @@ public class Controller {
                 vBoxArrayList.get(j).getChildren().add(button);
             }
         }
+        demarches.setText(matrice.getDemarche());
     }
 
-    private void resultatsNombre(double nombre) {
+    private void resultatsDeterminant(Matrice matrice) {
         hBoxResultat.getChildren().clear();
         Button button = new Button();
         button.setMinHeight(50);
@@ -298,13 +307,16 @@ public class Controller {
         button.setMaxHeight(50);
         button.setMaxWidth(50);
         button.setAlignment(Pos.CENTER);
-        button.setText(numberFormat.format(nombre));
-        button.setTooltip(new Tooltip(Double.toString(nombre)));
+        button.setText(numberFormat.format(matrice.getDeterminant()));
+        button.setTooltip(new Tooltip(Double.toString(matrice.getDeterminant())));
         hBoxResultat.getChildren().add(button);
+        demarches.setText(matrice.getDemarche());
     }
 
-    public void clearManipulation() {
+    public void clear() {
         hBoxManipulation.getChildren().clear();
+        hBoxResultat.getChildren().clear();
+        demarches.setText("");
         matriceArrayList = new ArrayList<>();
         tabPane.getSelectionModel().select(tabSize);
     }
@@ -314,17 +326,64 @@ public class Controller {
         Printer printer = Printer.getDefaultPrinter();
         PrinterJob job = PrinterJob.createPrinterJob(printer);
         PageLayout pageLayout = job.getJobSettings().getPageLayout();
-        ImageView imageView = new ImageView(hBoxResultat.snapshot(null,null));
-        imageView.setPreserveRatio(true);
-        imageView.setFitHeight(pageLayout.getPrintableHeight());
-        imageView.setFitWidth(pageLayout.getPrintableWidth());
-
+        ImageView imageView1 = new ImageView(hBoxResultat.snapshot(null, null));
+        imageView1.setPreserveRatio(true);
+        ImageView imageView2 = new ImageView(demarches.snapshot(null, null));
+        imageView2.setPreserveRatio(true);
+        VBox vBox = new VBox(imageView1, imageView2);
+        vBox.setMaxHeight(pageLayout.getPrintableHeight());
+        vBox.setMaxWidth(pageLayout.getPrintableWidth());
+        imageView1.setFitHeight(vBox.getHeight());
+        imageView1.setFitWidth(vBox.getWidth());
+        imageView2.setFitHeight(vBox.getHeight());
+        imageView2.setFitWidth(vBox.getWidth());
         if (job != null) {
-            boolean success = job.printPage(imageView);
+            boolean success = job.printPage(vBox);
             if (success) {
                 System.out.println("PRINTING FINISHED");
                 job.endJob();
             }
         }
+    }
+
+    public void operationsMixtes() {
+        boolean error = false;
+        for (int i = 0; (i < matriceArrayList.size() - 1 || matriceArrayList.size() < 2) && !error; i++)
+            if (matriceArrayList.size() < 2 || matriceArrayList.get(i).getM() != matriceArrayList.get(i + 1).getM() || matriceArrayList.get(i).getN() != matriceArrayList.get(i + 1).getN())
+                error = true;
+        if (matriceArrayList.size() > 1 && !error) {
+            Matrice matriceTemp = new Matrice(matriceArrayList.get(0).getNom(), matriceArrayList.get(0).getM(), matriceArrayList.get(0).getN(), matriceArrayList.get(0).getDemarche());
+            for (int i = 0; i < matriceTemp.getM(); i++)
+                for (int j = 0; j < matriceTemp.getN(); j++)
+                    matriceTemp.getMatrice()[i][j] = matriceArrayList.get(0).getMatrice()[i][j];
+            for (int i = 0; i < matriceArrayList.size() - 1; i++) {
+                ChoiceDialog<String> alerte = new ChoiceDialog<String>("Addition", "Addition", "Soustraction");
+                alerte.setTitle("Opération mixtes");
+                alerte.setHeaderText("Veuillez choisir");
+                alerte.setContentText("Votre choix: ");
+                matriceTemp = calculer(alerte.showAndWait().get().toLowerCase(), true, i, matriceTemp);
+                if (i == matriceArrayList.size() - 2)
+                    tabPane.getSelectionModel().select(tabResultat);
+            }
+            resultatsMatrice(matriceTemp);
+        } else {
+            String message = "";
+            if (matriceArrayList.size() < 1)
+                message += "Nombre insufisant de matrice\n";
+            if (error)
+                message += "Matrices invalides pour les opérations";
+            Alert alerte = new Alert(Alert.AlertType.INFORMATION);
+            alerte.setTitle("ERREUR");
+            alerte.setHeaderText(message);
+            alerte.showAndWait();
+        }
+    }
+
+    public void actionDemarches() {
+        tabPane.getSelectionModel().select(tabDemarches);
+    }
+
+    public void actionResultats() {
+        tabPane.getSelectionModel().select(tabResultat);
     }
 }

@@ -16,127 +16,175 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
-   <top>
-      <MenuBar BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="Menu">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Importer">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Aide">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
-   <center>
-      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-        <tabs>
-          <Tab fx:id="tabSize" text="Size Selection">
-               <content>
-                  <BorderPane>
-                     <center>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <Label text="Entrez la taille de vos matrices!" />
-                              <HBox alignment="CENTER" spacing="15.0">
-                                 <children>
-                                    <Spinner fx:id="matriceX">
-                                        <valueFactory>
-                                            <SpinnerValueFactory.IntegerSpinnerValueFactory max="10" min="1" />
-                                        </valueFactory>
-                                    </Spinner>
-                                    <Spinner fx:id="matriceY">
-                                     <valueFactory>
-                                          <SpinnerValueFactory.IntegerSpinnerValueFactory max="10" min="1" />
-                                     </valueFactory>
-                                    </Spinner>
-                                 </children>
-                              </HBox>
-                              <Button mnemonicParsing="false" onAction="#ajouter" text="Ajouter" />
-                           </children>
-                        </VBox>
-                     </center>
-                  </BorderPane>
-               </content>
-          </Tab>
-          <Tab text="Manipulation">
-               <content>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
-                     <center>
-                        <VBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <HBox alignment="TOP_CENTER" spacing="30.0">
-                                 <children>
-                                    <RadioButton fx:id="addition" mnemonicParsing="false" text="Addition" userData="addition">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="toggleGroup" />
-                                       </toggleGroup></RadioButton>
-                                    <RadioButton fx:id="soustraction" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Soustraction" toggleGroup="$toggleGroup" userData="soustraction" />
-                                    <RadioButton fx:id="multiplication" layoutX="97.0" layoutY="10.0" mnemonicParsing="false" text="Multiplication (nombre)" toggleGroup="$toggleGroup" userData="multiplication" />
-                                    <RadioButton fx:id="puissance" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" text="Puissance" toggleGroup="$toggleGroup" userData="puissance" />
-                                 </children>
-                              </HBox>
-                              <HBox alignment="TOP_CENTER" spacing="30.0">
-                                 <children>
-                                    <RadioButton fx:id="transposition" mnemonicParsing="false" text="Transposition" toggleGroup="$toggleGroup" userData="transposition" />
-                                    <RadioButton fx:id="inversion" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Inversion" toggleGroup="$toggleGroup" userData="inversion" />
-                                    <RadioButton fx:id="matriciel" layoutX="97.0" layoutY="10.0" mnemonicParsing="false" text="Produit matriciel" toggleGroup="$toggleGroup" userData="matriciel" />
-                                    <RadioButton fx:id="vectoriel" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" text="Produit vectoriel" toggleGroup="$toggleGroup" userData="vectoriel" />
-                                 </children>
-                              </HBox>
-                              <HBox alignment="TOP_CENTER" layoutX="10.0" layoutY="52.0" spacing="30.0">
-                                 <children>
-                                    <RadioButton fx:id="hadamard" mnemonicParsing="false" text="Produit d'Hadamard" toggleGroup="$toggleGroup" userData="hadamard" />
-                                    <RadioButton fx:id="tensoriel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Produit tensoriel" toggleGroup="$toggleGroup" userData="tensoriel" />
-                                    <RadioButton fx:id="determinant" layoutX="97.0" layoutY="10.0" mnemonicParsing="false" text="Déterminant" toggleGroup="$toggleGroup" userData="determinant" />
-                                 </children>
-                              </HBox>
-                              <HBox fx:id="hBoxManipulation" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="25.0" />
-                              <HBox alignment="CENTER" spacing="20.0">
-                                 <children>
-                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#clearManipulation" text="Clear" />
-                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#calculer" text="Calculer" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </VBox>
-                     </center>
-                  </BorderPane>
-               </content>
-          </Tab>
-            <Tab fx:id="tabResultat" text="Résultats">
-               <content>
-                  <BorderPane fx:id="borderPaneResultat" prefHeight="200.0" prefWidth="200.0">
-                     <center>
-                        <VBox alignment="CENTER" fillWidth="false" spacing="50.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <HBox fx:id="hBoxResultat" alignment="CENTER" fillHeight="false">
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin></HBox>
-                              <HBox alignment="CENTER" spacing="20.0">
-                                 <children>
-                                    <Button mnemonicParsing="false" onAction="#printImage" text="Imprimer" />
-                                    <Button mnemonicParsing="false" text="Démarches" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </VBox>
-                     </center>
-                  </BorderPane>
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
-   </center>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sample.Controller">
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <menus>
+                <Menu mnemonicParsing="false" text="Menu">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Close"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Importer">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Aide">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <center>
+        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <tabs>
+                <Tab fx:id="tabSize" text="Size Selection">
+                    <content>
+                        <BorderPane>
+                            <center>
+                                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0"
+                                      BorderPane.alignment="CENTER">
+                                    <children>
+                                        <Label text="Entrez la taille de vos matrices!"/>
+                                        <HBox alignment="CENTER" spacing="15.0">
+                                            <children>
+                                                <Spinner fx:id="matriceX">
+                                                    <valueFactory>
+                                                        <SpinnerValueFactory.IntegerSpinnerValueFactory max="10"
+                                                                                                        min="1"/>
+                                                    </valueFactory>
+                                                </Spinner>
+                                                <Spinner fx:id="matriceY">
+                                                    <valueFactory>
+                                                        <SpinnerValueFactory.IntegerSpinnerValueFactory max="10"
+                                                                                                        min="1"/>
+                                                    </valueFactory>
+                                                </Spinner>
+                                            </children>
+                                        </HBox>
+                                        <Button mnemonicParsing="false" onAction="#ajouter" text="Ajouter"/>
+                                    </children>
+                                </VBox>
+                            </center>
+                        </BorderPane>
+                    </content>
+                </Tab>
+                <Tab text="Manipulation">
+                    <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                            <center>
+                                <VBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
+                                    <children>
+                                        <HBox alignment="TOP_CENTER" spacing="30.0">
+                                            <children>
+                                                <RadioButton fx:id="addition" mnemonicParsing="false" text="Addition"
+                                                             userData="addition">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="toggleGroup"/>
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="soustraction" layoutX="10.0" layoutY="10.0"
+                                                             mnemonicParsing="false" text="Soustraction"
+                                                             toggleGroup="$toggleGroup" userData="soustraction"/>
+                                                <RadioButton fx:id="multiplication" layoutX="97.0" layoutY="10.0"
+                                                             mnemonicParsing="false" text="Multiplication (nombre)"
+                                                             toggleGroup="$toggleGroup" userData="multiplication"/>
+                                                <RadioButton fx:id="puissance" layoutX="144.0" layoutY="10.0"
+                                                             mnemonicParsing="false" text="Puissance"
+                                                             toggleGroup="$toggleGroup" userData="puissance"/>
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="TOP_CENTER" spacing="30.0">
+                                            <children>
+                                                <RadioButton fx:id="transposition" mnemonicParsing="false"
+                                                             text="Transposition" toggleGroup="$toggleGroup"
+                                                             userData="transposition"/>
+                                                <RadioButton fx:id="inversion" layoutX="10.0" layoutY="10.0"
+                                                             mnemonicParsing="false" text="Inversion"
+                                                             toggleGroup="$toggleGroup" userData="inversion"/>
+                                                <RadioButton fx:id="matriciel" layoutX="97.0" layoutY="10.0"
+                                                             mnemonicParsing="false" text="Produit matriciel"
+                                                             toggleGroup="$toggleGroup" userData="matriciel"/>
+                                                <RadioButton fx:id="vectoriel" layoutX="144.0" layoutY="10.0"
+                                                             mnemonicParsing="false" text="Produit vectoriel"
+                                                             toggleGroup="$toggleGroup" userData="vectoriel"/>
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="TOP_CENTER" layoutX="10.0" layoutY="52.0" spacing="30.0">
+                                            <children>
+                                                <RadioButton fx:id="hadamard" mnemonicParsing="false"
+                                                             text="Produit d'Hadamard" toggleGroup="$toggleGroup"
+                                                             userData="hadamard"/>
+                                                <RadioButton fx:id="tensoriel" layoutX="10.0" layoutY="10.0"
+                                                             mnemonicParsing="false" text="Produit tensoriel"
+                                                             toggleGroup="$toggleGroup" userData="tensoriel"/>
+                                                <RadioButton fx:id="determinant" layoutX="97.0" layoutY="10.0"
+                                                             mnemonicParsing="false" text="Déterminant"
+                                                             toggleGroup="$toggleGroup" userData="determinant"/>
+                                            </children>
+                                        </HBox>
+                                        <HBox fx:id="hBoxManipulation" alignment="CENTER" prefHeight="100.0"
+                                              prefWidth="200.0" spacing="25.0"/>
+                                        <HBox alignment="CENTER" spacing="20.0">
+                                            <children>
+                                                <Button alignment="CENTER" mnemonicParsing="false" onAction="#clear"
+                                                        text="Clear"/>
+                                                <Button alignment="CENTER" mnemonicParsing="false"
+                                                        onAction="#actionCalculer" text="Calculer"/>
+                                                <Button alignment="CENTER" mnemonicParsing="false"
+                                                        onAction="#operationsMixtes" text="Opérations mixtes"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </center>
+                        </BorderPane>
+                    </content>
+                </Tab>
+                <Tab fx:id="tabResultat" text="Résultats">
+                    <content>
+                        <BorderPane fx:id="borderPaneResultat" prefHeight="200.0" prefWidth="200.0">
+                            <center>
+                                <VBox alignment="CENTER" fillWidth="false" spacing="50.0" BorderPane.alignment="CENTER">
+                                    <children>
+                                        <HBox fx:id="hBoxResultat" alignment="CENTER" fillHeight="false">
+                                            <VBox.margin>
+                                                <Insets/>
+                                            </VBox.margin>
+                                        </HBox>
+                                        <HBox alignment="CENTER" spacing="20.0">
+                                            <children>
+                                                <Button mnemonicParsing="false" onAction="#printImage" text="Imprimer"/>
+                                                <Button mnemonicParsing="false" onAction="#actionDemarches"
+                                                        text="Démarches"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </center>
+                        </BorderPane>
+                    </content>
+                </Tab>
+                <Tab fx:id="tabDemarches" text="Démarches">
+                    <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                            <center>
+                                <VBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
+                                    <children>
+                                        <Button fx:id="demarches" alignment="CENTER" contentDisplay="CENTER"
+                                                mnemonicParsing="false"/>
+                                        <Button mnemonicParsing="false" onAction="#actionResultats" text="Résultats"/>
+                                    </children>
+                                </VBox>
+                            </center>
+                        </BorderPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
 </BorderPane>
