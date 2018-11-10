@@ -9,9 +9,18 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
     @FXML
@@ -34,6 +43,13 @@ public class Controller {
     public void ajouter() {
         matriceArrayList.add(new Matrice(Character.toString((char) (65 + matriceArrayList.size())), (int) matriceX.getValueFactory().getValue(), (int) matriceY.getValueFactory().getValue(), ""));
         creerMatrice(matriceArrayList.get(matriceArrayList.size() - 1));
+        afficherMatrice(matriceArrayList.get(matriceArrayList.size() - 1));
+        test();
+    }
+
+    public void ajouterFromFile(int m, int n, double[][] matrice) {
+        matriceArrayList.add(new Matrice(Character.toString((char) (65 + matriceArrayList.size())), m, n, ""));
+        matriceArrayList.get(matriceArrayList.size() - 1).setMatrice(matrice);
         afficherMatrice(matriceArrayList.get(matriceArrayList.size() - 1));
         test();
     }
@@ -133,9 +149,8 @@ public class Controller {
             error = false;
         } else
             matriciel.setDisable(false);
-        for (int i = 0; i < matriceArrayList.size() && !error; i++)
-            if (matriceArrayList.size() != 2 || matriceArrayList.get(0).getM() != matriceArrayList.get(1).getM() && matriceArrayList.get(0).getM() != 1 && matriceArrayList.get(0).getN() != matriceArrayList.get(2).getN() && matriceArrayList.get(0).getN() != 3)
-                error = true;
+        if (matriceArrayList.size() != 2 || matriceArrayList.get(0).getM() != matriceArrayList.get(1).getM() && matriceArrayList.get(0).getM() != 1 && matriceArrayList.get(0).getN() != matriceArrayList.get(1).getN() && matriceArrayList.get(0).getN() != 3)
+            error = true;
         if (error) {
             vectoriel.setDisable(true);
             if (vectoriel.isSelected())
@@ -384,5 +399,83 @@ public class Controller {
 
     public void actionResultats() {
         tabPane.getSelectionModel().select(tabResultat);
+    }
+
+    public void loadCSV() {
+        try {
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Veuillez sélectionner un fichier");
+            fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichiers CSV", "*.csv"));
+            File fichier = fc.showOpenDialog(Main.stage);
+            List<String> allLines = Files.readAllLines(fichier.toPath());
+            String string;
+            for (int i = 0; i < allLines.size(); i++) {
+                string = allLines.get(i);
+                String[] parts = string.split(",");
+                double[][] matrice = new double[Integer.parseInt(parts[0])][Integer.parseInt(parts[1])];
+                for (int j = 2; j < 2 + Integer.parseInt(parts[0]) && j < parts.length; j++)
+                    for (int k = j; k < 2 + Integer.parseInt(parts[1]) && k < parts.length; k++)
+                        matrice[j - 2][k - 2] = Double.parseDouble(parts[k]);
+                ajouterFromFile(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), matrice);
+            }
+
+        } catch (Exception e) {
+        }
+    }
+
+    public void loadXML() {
+        try {
+            File file = new File("Data.xml");
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbf.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+            Node root = doc.getDocumentElement();
+            clean(root);
+            NodeList data = root.getChildNodes();
+            for (int i = 1; i < data.getLength(); i++) {
+                double[][] matrice = new double[Integer.parseInt(data.item(i).getChildNodes().item(0).getTextContent())][Integer.parseInt(data.item(i).getChildNodes().item(1).getTextContent())];
+                for (int j = 0; j < Integer.parseInt(data.item(i).getChildNodes().item(0).getTextContent()); j++) {
+                    String[] parts = data.item(i).getChildNodes().item(2).getChildNodes().item(j).getTextContent().split(",");
+                    for (int k = 0; k < Integer.parseInt(data.item(i).getChildNodes().item(1).getTextContent()); k++)
+                        matrice[j][k] = Double.parseDouble(parts[k]);
+                }
+                ajouterFromFile(Integer.parseInt(data.item(i).getChildNodes().item(0).getTextContent()), Integer.parseInt(data.item(i).getChildNodes().item(1).getTextContent()), matrice);
+            }
+            String[] parts = data.item(0).getTextContent().split(",");
+            if (parts.length > 1) {
+                Matrice matriceTemp = new Matrice(matriceArrayList.get(0).getNom(), matriceArrayList.get(0).getM(), matriceArrayList.get(0).getN(), matriceArrayList.get(0).getDemarche());
+                for (int i = 0; i < matriceTemp.getM(); i++)
+                    for (int j = 0; j < matriceTemp.getN(); j++)
+                        matriceTemp.getMatrice()[i][j] = matriceArrayList.get(0).getMatrice()[i][j];
+                for (int i = 0; i < matriceArrayList.size() - 1; i++) {
+                    matriceTemp = calculer(parts[i], true, i, matriceTemp);
+                    if (i == matriceArrayList.size() - 2)
+                        tabPane.getSelectionModel().select(tabResultat);
+                }
+                resultatsMatrice(matriceTemp);
+            } else
+                calculer(parts[0], false, 0, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void clean(Node node) {
+        NodeList childNodes = node.getChildNodes();
+        for (int n = childNodes.getLength() - 1; n >= 0; n--) {
+            Node child = childNodes.item(n);
+            short nodeType = child.getNodeType();
+
+            if (nodeType == Node.ELEMENT_NODE)
+                clean(child);
+            else if (nodeType == Node.TEXT_NODE) {
+                String trimmedNodeVal = child.getNodeValue().trim();
+                if (trimmedNodeVal.length() == 0)
+                    node.removeChild(child);
+                else
+                    child.setNodeValue(trimmedNodeVal);
+            } else if (nodeType == Node.COMMENT_NODE)
+                node.removeChild(child);
+        }
     }
 }

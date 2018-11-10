@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<Data>
+    <Operations>addition,soustraction,addition</Operations>
+    <Matrice>
+        <m>5</m>
+        <n>5</n>
+        <Matrice>
+            <ligne>14,45,25,65,31</ligne>
+            <ligne>43,25,3,43,76</ligne>
+            <ligne>32,44,34,3,56</ligne>
+            <ligne>43,21,65,87,34</ligne>
+            <ligne>12,36,21,54,12</ligne>
+        </Matrice>
+    </Matrice>
+    <Matrice>
+        <m>5</m>
+        <n>5</n>
+        <Matrice>
+            <ligne>43,25,3,43,76</ligne>
+            <ligne>12,36,21,54,12</ligne>
+            <ligne>32,44,34,3,56</ligne>
+            <ligne>14,45,25,65,31</ligne>
+            <ligne>43,21,65,87,34</ligne>
+        </Matrice>
+    </Matrice>
+    <Matrice>
+        <m>5</m>
+        <n>5</n>
+        <Matrice>
+            <ligne>43,21,65,87,34</ligne>
+            <ligne>32,44,34,3,56</ligne>
+            <ligne>12,36,21,54,12</ligne>
+            <ligne>14,45,25,65,31</ligne>
+            <ligne>43,25,3,43,76</ligne>
+        </Matrice>
+    </Matrice>
+</Data>
