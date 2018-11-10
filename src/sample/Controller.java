@@ -402,6 +402,7 @@ public class Controller {
     }
 
     public void loadCSV() {
+        clear();
         try {
             FileChooser fc = new FileChooser();
             fc.setTitle("Veuillez sélectionner un fichier");
@@ -424,6 +425,7 @@ public class Controller {
     }
 
     public void loadXML() {
+        clear();
         try {
             File file = new File("Data.xml");
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
